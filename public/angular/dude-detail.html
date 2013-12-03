@@ -1,0 +1,21 @@
+<div class="well" ng-switch on="isEdit">
+
+    <div ng-switch-when="false">
+        <h5>Detail</h5>
+        <span>{{ dude.name }}</span>
+        <button class="btn btn-default btn-xs" ng-click="openForEdit()">Edit</button>
+        <button class="btn btn-danger btn-xs" ng-click="deleteDude(dude)">Delete</button>
+    </div>
+
+    <div ng-switch-when="true">
+        <h5>Edit</h5>
+        <form ng-submit="updateDude(dude)">
+            <p>Name: <input type="text" ng-model="editDude.name" name="name"></p>
+            <div class="btn-group btn-group-xs">
+                <input type="submit" class="btn btn-success">
+                <button class="btn btn-default btn-xs" ng-click="closeEdit()">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+</div>
