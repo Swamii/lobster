@@ -1,0 +1,11 @@
+{
+  "name": "lobster",
+	"version": "0.0.1",
+	"author": "Akseli Nelander",
+  "devDependencies": {
+    "coffee-script": "",
+    "grunt": "",
+    "grunt-contrib-coffee": "",
+    "grunt-contrib-watch": "~0.5.3"
+  }
+}

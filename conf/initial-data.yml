@@ -1,0 +1,155 @@
+
+# Users
+
+users:
+
+    - !!models.User
+        email:      admin@lobster.io
+        firstName:  Lobster
+        lastName:   Man
+        password:   secret
+
+    - !!models.User
+        email:      herman@example.com
+        firstName:  Herman
+        lastName:   Manovic
+        password:   onetwo
+
+    - !!models.User
+        email:      gregor@example.com
+        firstName:  Greg
+        lastName:   Dokapoka
+        password:   threefour
+
+    - !!models.User
+        email:      ursula@example.com
+        firstName:  Ursula
+        lastName:   Lobsteria
+        password:   fivesix
+
+# Products
+
+products:
+
+    - !!models.Product
+        name:       Play 2.0
+        price:      1000
+        type:       MISC
+        active:     Yes
+        description: The newest, coolest, hippest framework in the biz.
+
+    - !!models.Product
+        name:       The Lobster
+        price:      100000
+        type:       LOBSTER
+        active:     Yes
+        description: The poster child for this website
+
+    - !!models.Product
+        name:       Crabby the crab
+        price:      10
+        type:       CRAB
+        active:     Yes
+        description: He's a lovable crab.
+
+    - !!models.Product
+        name:       Tuny
+        price:      900
+        type:       TUNA
+        active:     No
+        description: He smells nice
+
+    - !!models.Product
+        name:       Tunacious T
+        price:      500
+        type:       TUNA
+        active:     Yes
+        description: Rockin' fish
+
+    - !!models.Product
+        name:       Cream
+        price:      1000
+        type:       MISC
+        active:     No
+        description: It's white and fluffy.
+
+    - !!models.Product
+        name:       Dat Blowfish
+        price:      1
+        type:       GENERIC_FISH
+        active:     Yes
+        description: Just blowfish.
+
+    - !!models.Product
+        name:       Sally
+        price:      100
+        type:       SALMON
+        active:     Yes
+        description: Salmon with a name
+
+    - !!models.Product
+        name:       Karate Kid VHS
+        price:      155
+        type:       MISC
+        active:     Yes
+        description: Somehow a movie got in here.
+
+    - !!models.Product
+        name:       Dondo
+        price:      169
+        type:       MISC
+        active:     Yes
+        description: Dondo pls
+
+    - !!models.Product
+        name:       Lobster A++
+        price:      10000
+        type:       LOBSTER
+        active:     Yes
+        description: High Quality NoScope 420 Lobster
+
+    - !!models.Product
+        name:       Crabs
+        price:      10
+        type:       CRAB
+        active:     Yes
+        description: Crabs. We have them.
+
+    - !!models.Product
+        name:       Makin' Bacon
+        price:      1000
+        type:       MISC
+        active:     Yes
+        description: Makin Bacon Bakin
+
+    - !!models.Product
+        name:       Fish
+        price:      1550
+        type:       GENERIC_FISH
+        active:     Yes
+        description: Is fish.
+
+    - !!models.Product
+        name:       Something
+        price:      199
+        type:       MISC
+        active:     Yes
+        description: ...
+
+    - !!models.Product
+        name:       Head First Java
+        price:      201
+        type:       MISC
+        active:     Yes
+        description: A book
+
+    - !!models.Product
+        name:       And another thing
+        price:      154
+        type:       MISC
+        active:     Yes
+        description: Nothing more to say.
+
+
+# Invoice
+

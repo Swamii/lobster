@@ -1,0 +1,37 @@
+<div class="modal-header">
+    <h3>
+        Your cart
+        <span ng-switch="cart.cartItems.length">
+            <span ng-switch-when="0"> is empty</span>
+            <span ng-switch-when="1"> contains {{ cart.cartItems.length }} item</span>
+            <span ng-switch-default> contains {{ cart.cartItems.length }} items</span>
+        </span>
+    </h3>
+</div>
+<div class="modal-body">
+    <ul class="media-list">
+        <li class="media list-unstyled" ng-repeat="cartItem in cart.cartItems">
+            <a class="pull-left" href="#">
+                <img class="media-object" src="http://placekitten.com/g/64/64" alt="PLACEKITTEN COMES!">
+            </a>
+            <div class="media-body">
+                <h4 class="media-heading"><a>{{ cartItem.product.name }}</a><small> {{ cartItem.product.price | currency }}</small></h4>
+                <p>{{ cartItem.product.description }}</p>
+                <label class="col-md-1">Qty</label>
+                <div class="col-md-4">
+                    <input type="number" class="form-control input-sm" ng-model="cartItem.quantity" required>
+                </div>
+                <div class="col-md-3">
+                    <button class="form-control btn btn-success" ng-click="update($index)">Update</button>
+                </div>
+                <div class="col-md-3">
+                    <button class="form-control btn btn-danger" ng-click="remove($index)">Remove</button>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary">Checkout</button>
+    <button class="btn btn-default" ng-click="close()">Close</button>
+</div>
