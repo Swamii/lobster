@@ -70,8 +70,7 @@
 
 (function() {
   'use strict';
-  var app,
-    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+  var app;
 
   app = angular.module('app.controllers', []);
 
@@ -88,7 +87,7 @@
           $scope.dudes.push(dude);
           return $scope.newDude = {};
         }, function() {
-          return console.log("error error");
+          return console.error("error error");
         });
       };
       return $scope.selectDude = function(selectedDude) {
@@ -131,21 +130,17 @@
           $scope.dude = dude;
           return closeEdit();
         }, function() {
-          return console.log("error error putting");
+          return console.error("error error putting");
         });
       };
     }
   ]);
 
-  app.controller('SignupFormCtrl', [
-    '$scope', function($scope) {
-      return $scope.message = "Hello Form!";
-    }
-  ]);
+  app.controller('GenericFormCtrl', ['$scope', function($scope) {}]);
 
   app.controller('BrowseCtrl', [
-    '$scope', 'UserService', 'FlashService', 'Api', 'page', 'Utils', 'CartService', function($scope, UserService, FlashService, Api, page, Utils, CartService) {
-      var ownedByUser, setValues;
+    '$scope', 'FlashService', 'Api', 'page', 'Utils', 'CartService', '$modal', function($scope, FlashService, Api, page, Utils, CartService, $modal) {
+      var setValues;
       $scope.page = page;
       $scope.pageRange = null;
       $scope.filters = {
@@ -154,7 +149,7 @@
         sort: 'name',
         order: 'asc',
         filter: '',
-        pType: ''
+        category: ''
       };
       $scope.update = function() {
         $scope.buttonText = 'Loading...';
@@ -165,56 +160,61 @@
         });
       };
       setValues = function(page) {
-        var _i, _ref, _results;
         $scope.page = page;
         $scope.range = Utils.chunkIt(page.products, 4);
         FlashService.show("Showing " + page.products.length + " results of " + page.totalRowCount, "info");
-        $scope.pageRange = page.totalPages > 0 ? (function() {
-          _results = [];
-          for (var _i = 1, _ref = page.totalPages; 1 <= _ref ? _i <= _ref : _i >= _ref; 1 <= _ref ? _i++ : _i--){ _results.push(_i); }
-          return _results;
-        }).apply(this) : [1];
         return $scope.buttonText = 'Update';
       };
       setValues(page);
       $scope.goTo = function(pageNum) {
-        if (pageNum !== $scope.page.pageIndex && __indexOf.call($scope.pageRange, pageNum) >= 0) {
+        if (pageNum !== $scope.page.pageIndex) {
           $scope.filters.page = pageNum;
           return $scope.update();
         }
       };
-      $scope.buy = function(product) {
-        return CartService.add(product);
+      $scope.buy = CartService.add;
+      $scope.buyStatus = CartService.buyStatus;
+      $scope.showCart = function() {
+        return $scope.$emit('showCart');
       };
-      $scope.buyStatus = function(product) {
-        if (!UserService.isLoggedIn()) {
-          return "login";
-        } else if (ownedByUser(product)) {
-          return "owned";
-        } else {
-          return "buy";
-        }
-      };
-      return ownedByUser = function(product) {
-        var owned;
-        owned = false;
-        angular.forEach(CartService.cart.cartItems, function(item) {
-          if (item.product.id === product.id) {
-            return owned = true;
+      return $scope.showDetail = function(product) {
+        var modalInstance;
+        modalInstance = $modal.open({
+          templateUrl: '/assets/angular/product-modal.html',
+          controller: 'ProductDetailCtrl',
+          resolve: {
+            product: function() {
+              return product;
+            }
           }
         });
-        return owned;
+        return modalInstance.result.then(function() {
+          return $scope.showCart();
+        });
+      };
+    }
+  ]);
+
+  app.controller('ProductDetailCtrl', [
+    '$scope', '$modalInstance', 'product', 'CartService', function($scope, $self, product, CartService) {
+      $scope.product = product;
+      $scope.buyStatus = CartService.buyStatus;
+      $scope.buy = CartService.add;
+      $scope.showCart = function() {
+        return $self.close();
+      };
+      return $scope.close = function() {
+        return $self.dismiss('cancel');
       };
     }
   ]);
 
   app.controller('CartCtrl', [
-    '$scope', 'CartService', 'Api', '$modal', function($scope, CartService, Api, $modal) {
+    '$scope', 'CartService', 'Api', '$modal', '$rootScope', '$timeout', function($scope, CartService, Api, $modal, $rootScope, $timeout) {
       $scope.cart = CartService.cart;
-      console.log($scope.cart);
-      return $scope.showCart = function() {
-        var modalInstance;
-        return modalInstance = $modal.open({
+      $scope.doFlash = false;
+      $scope.showCart = function() {
+        return $modal.open({
           templateUrl: '/assets/angular/cart-modal.html',
           controller: 'CartModalCtrl',
           resolve: {
@@ -224,30 +224,56 @@
           }
         });
       };
+      $scope.$on('itemAdded', function(event, obj) {
+        $scope.doFlash = true;
+        return $timeout(function() {
+          return $scope.doFlash = false;
+        }, 2000);
+      });
+      return $rootScope.$on('showCart', function(event, obj) {
+        return $scope.showCart();
+      });
     }
   ]);
 
   app.controller('CartModalCtrl', [
-    '$scope', '$modalInstance', 'Api', 'cart', function($scope, $modalInstance, Api, cart) {
-      console.log(cart);
-      $scope.cart = Api.copy(cart);
+    '$scope', '$modalInstance', 'Api', 'cart', 'Utils', function($scope, $modalInstance, Api, cart, Utils) {
+      $scope.cart = cart;
+      $scope.editable = {};
       $scope.close = function() {
         return $modalInstance.dismiss('cancel');
       };
-      $scope.update = function(index) {
-        var item;
-        item = $scope.cart.cartItems[index];
-        console.log($scope.cart);
-        return $scope.cart.customPUT(item, '');
-      };
-      return $scope.remove = function(index) {
-        var product;
-        product = $scope.cart.cartItems[index];
-        console.log($scope.cart);
-        return product.remove().then(function(newCart) {
-          return $scope.cart = newCart;
+      $scope.update = function() {
+        $scope.errors = null;
+        return $scope.editable.put().then(function(item) {
+          var idx;
+          idx = Utils.indexById($scope.cart, item.id);
+          $scope.cart.splice(idx, 1, item);
+          return $scope.editable = {};
+        }, function(result) {
+          $scope.errors = result.data;
+          console.error("error updating " + item);
+          return $scope.editable = {};
         });
       };
+      $scope.openForEdit = function(index) {
+        return $scope.editable = Api.copy($scope.cart[index]);
+      };
+      return $scope.remove = function(index) {
+        var item;
+        item = $scope.cart[index];
+        return item.remove().then(function() {
+          return $scope.cart.splice(index, 1);
+        }, function() {
+          return console.error("error removing " + item + " from cart");
+        });
+      };
+    }
+  ]);
+
+  app.controller('CheckoutCtrl', [
+    '$scope', 'CartService', function($scope, CartService) {
+      return $scope.cart = CartService.cart;
     }
   ]);
 
@@ -288,6 +314,46 @@
     };
   });
 
+  app.directive('lowestNumber', function() {
+    return {
+      restrict: 'A',
+      require: 'ngModel',
+      link: function(scope, element, attrs, ctrl) {
+        var lowestNumber;
+        if (attrs.lowestNumber) {
+          lowestNumber = parseInt(attrs.lowestNumber, 10);
+        } else {
+          lowestNumber = 1;
+        }
+        return scope.$watch(attrs.ngModel, function(newVal, oldVal) {
+          var num;
+          if (newVal !== void 0) {
+            num = parseInt(newVal, 10);
+            if (isNaN(num) || num < lowestNumber) {
+              ctrl.$setViewValue(lowestNumber);
+              return ctrl.$render();
+            }
+          }
+        });
+      }
+    };
+  });
+
+  app.directive('initial', function() {
+    return {
+      restrict: 'A',
+      controller: [
+        '$scope', '$element', '$attrs', '$parse', function($scope, $element, $attrs, $parse) {
+          var getter, setter, val;
+          val = $attrs.initial || $attrs.value || $element.text();
+          getter = $parse($attrs.ngModel);
+          setter = getter.assign;
+          return setter($scope, val);
+        }
+      ]
+    };
+  });
+
 }).call(this);
 
 (function() {
@@ -323,9 +389,12 @@
     'USER', function(USER) {
       return {
         isLoggedIn: function() {
-          return !!USER;
+          return USER && USER.email;
         },
-        email: USER
+        isAdmin: function() {
+          return USER && USER.email && USER.isAdmin;
+        },
+        email: USER.email
       };
     }
   ]);
@@ -350,30 +419,45 @@
 
   api.factory('CartService', [
     'Api', 'UserService', '$rootScope', 'FlashService', function(Api, UserService, $rootScope, FlashService) {
-      var buy, cart, remove, setCart;
+      var buy, buyStatus, cart, ownedByUser, setCart;
       cart = [];
       setCart = function() {
         if (UserService.isLoggedIn()) {
           return Api.all('cart').getList().then(function(incCart) {
-            console.log(incCart);
             return angular.copy(incCart, cart);
           });
         }
       };
+      setCart();
       buy = function(product) {
-        return cart.all('item').post({
+        return Api.all('cart').post({
           id: product.id
         }).then(function(cartItem) {
-          cart.cartItems.push(cartItem);
+          cart.push(cartItem);
           return $rootScope.$broadcast('itemAdded');
         }, function(error) {
           return FlashService.show(error);
         });
       };
-      remove = function(item) {
-        return console.log(item);
+      buyStatus = function(product) {
+        if (!UserService.isLoggedIn()) {
+          return "login";
+        } else if (ownedByUser(product)) {
+          return "owned";
+        } else {
+          return "buy";
+        }
       };
-      setCart();
+      ownedByUser = function(product) {
+        var owned;
+        owned = false;
+        angular.forEach(cart, function(item) {
+          if (item.product.id === product.id) {
+            return owned = true;
+          }
+        });
+        return owned;
+      };
       return {
         cart: cart,
         reset: function() {
@@ -384,6 +468,9 @@
         },
         remove: function(item) {
           return remove(item);
+        },
+        buyStatus: function(product) {
+          return buyStatus(product);
         }
       };
     }
@@ -417,26 +504,6 @@
     };
   });
 
-  api.factory('DudeService', function() {
-    var dudes;
-    dudes = [];
-    return {
-      dudes: dudes,
-      add: function(newDude) {
-        dudes.push(newDude);
-        return dudes;
-      },
-      remove: function(remDude) {
-        angular.forEach(dudes, function(dude, idx) {
-          if (remDude.id === dude.id) {
-            return dudes.splice(idx, 1);
-          }
-        });
-        return dudes;
-      }
-    };
-  });
-
 }).call(this);
 
 (function() {
@@ -446,23 +513,26 @@
 
   app.factory('Utils', function() {
     return {
-      indexById: function(iterable, checkObj) {
+      indexById: function(iterable, checkId) {
         var index;
         index = -1;
-        return angular.forEach(iterable, function(obj, i) {
-          if (obj.id === checkObj.id) {
+        angular.forEach(iterable, function(obj, i) {
+          console.log;
+          if (obj.id === checkId) {
             return index = i;
           }
         });
+        return index;
       },
       fromId: function(iterable, checkId) {
         var the_obj;
         the_obj = {};
-        return angular.forEach(iterable, function(obj) {
+        angular.forEach(iterable, function(obj) {
           if (obj.id === checkId) {
             return the_obj = obj;
           }
         });
+        return the_obj;
       },
       chunkIt: function(iterable, cols) {
         var i, _i, _ref, _results;

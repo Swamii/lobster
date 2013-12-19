@@ -1,0 +1,105 @@
+@(products: List[Product], productForm: Form[Product])
+@import helper.twitterBootstrap._
+
+@main("Lobster.io / Admin") {
+    <div class="row" ng-controller="GenericFormCtrl">
+        <h1>New Product</h1>
+
+        <form action="@routes.Admin.addProduct()" method="POST" role="form" class="col-md-6" name="productForm">
+
+            @if(productForm.hasErrors) {
+                <div class="alert alert-danger">
+                @if(productForm.hasGlobalErrors) {
+                    <p>@productForm.globalError.message</p>
+                }
+                @for((field, errors) <- productForm.errors()) {
+                    <label>@field:</label>
+                    @for(message <- errors) {
+                        <p>@message.message()<p>
+                    }
+                }
+                </div>
+            }
+
+            @helper.CSRF.formField
+
+            <div class="form-group">
+                <label for="name">Name *</label>
+                <input type="text" name="name" class="form-control" placeholder="Name"
+                       ng-model="product.name" ng-init="product.name = '@productForm("name").value'" required>
+            </div>
+
+            <div class="form-group">
+                <label for="price">Price *</label>
+                <input type="number" name="price" class="form-control" placeholder="Price"
+                       ng-model="product.price" lowest-number="1"
+                       @if(productForm("price").value != null && !productForm("price").value.isEmpty) { ng-init="product.price = @productForm("price").value" }
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description *</label>
+                <textarea name="description" class="form-control" placeholder="Description"
+                          ng-model="product.description" ng-init="product.description = '@productForm("description").value'" required>
+                </textarea>
+                <p class="help-block">Minimum 10 characters.</p>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Category *</label>
+                    <select class="form-control" name="category"
+                    ng-model="product.category" ng-init="product.category = '@productForm("category").value'" required>
+                    @for((id, name) <- enums.ProductType.options()) {
+                        <option value="@id">@name</option>
+                    }
+                    </select>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-success btn-lg"
+                        ng-disabled="productForm.$invalid">Save</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="row">
+        <h1>Products</h1>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Price</th>
+                    <th>Description</th>
+                    <th>Active</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            @for(product <- products) {
+                <tr>
+                    <td>@product.id</td>
+                    <td>@product.name</td>
+                    <td>@product.category</td>
+                    <td>@product.price</td>
+                    <td>@product.description</td>
+                    <td>
+                    @if(product.active) {
+                        <i class="glyphicon glyphicon-thumbs-up"></i>
+                    } else {
+                        <i class="glyphicon glyphicon-thumbs-down"></i>
+                    }
+                    </td>
+                    <td>
+                        <a href="@routes.Admin.productDetail(product.id)"><i class="glyphicon glyphicon-pencil"></i></a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+
+        </table>
+    </div>
+}

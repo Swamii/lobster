@@ -8,6 +8,7 @@ import java.util.TreeMap;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import managers.Cartz;
+import managers.Invoices;
 import managers.Productz;
 import managers.Users;
 import models.*;
@@ -18,9 +19,9 @@ import play.libs.Json;
 import play.mvc.*;
 import play.db.jpa.Transactional;
 import play.db.jpa.JPA;
-import security.CartOwnerReq;
 import security.LoginReq;
 import views.html.browse;
+import views.html.checkout;
 import views.html.index;
 import views.html.auth.login;
 import views.html.auth.signup;
@@ -30,13 +31,27 @@ public class Application extends Controller {
 
     @Transactional
     @Security.Authenticated(LoginReq.class)
+    public static Result checkout() {
+        Double cost = Cartz.getTotalCost(request().username());
+        return ok(checkout.render(cost));
+    }
+
+    @Transactional
+    @Security.Authenticated(LoginReq.class)
+    public static Result buy() {
+        Invoices.buy(Users.byEmail(request().username()).cart);
+        return redirect(routes.Application.index());
+    }
+
+    @Transactional
+    @Security.Authenticated(LoginReq.class)
     public static Result getCart() {
         User user = Users.byEmail(request().username());
         return ok(Json.toJson(user.cart));
     }
 
     @Transactional
-    @Security.Authenticated(CartOwnerReq.class)
+    @Security.Authenticated(LoginReq.class)
     public static Result addToCart() {
         JsonNode node = request().body().asJson();
         Long productId = node.findPath("id").asLong();
@@ -51,24 +66,22 @@ public class Application extends Controller {
     }
 
     @Transactional
-    @Security.Authenticated(CartOwnerReq.class)
+    @Security.Authenticated(LoginReq.class)
     public static Result updateCartItem(Long itemId) {
-        CartItem item;
-        ObjectMapper map = new ObjectMapper();
-        try {
-            item = map.readValue(request().body().asText(), CartItem.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-            Logger.warn("updateCart, reading of -> {} <- failed.", request().body().asText());
-            return badRequest("Bad input");
+        Form<CartItem> itemForm = Form.form(CartItem.class).bindFromRequest();
+        if (itemForm.hasErrors()) {
+            return badRequest(itemForm.errorsAsJson());
         }
+        CartItem item = itemForm.get();
+        Logger.debug("updateCartItem {}", item);
+
         Cartz.update(request().username(), item);
 
         return ok(Json.toJson(item));
     }
 
     @Transactional
-    @Security.Authenticated(CartOwnerReq.class)
+    @Security.Authenticated(LoginReq.class)
     public static Result removeCartItem(Long itemId) {
         Cart cart = Cartz.removeItem(request().username(), itemId);
         return ok(Json.toJson(cart));
@@ -76,7 +89,7 @@ public class Application extends Controller {
 
     @Transactional
     public static Result index() {
-        return ok(index.render());
+        return ok(index.render(Productz.count(), Users.count()));
     }
 
     @Transactional
@@ -139,8 +152,8 @@ public class Application extends Controller {
     }
 
     @Transactional(readOnly = true)
-    public static Result getProducts(int page, int size, String sort, String order, String filter, String pType) {
-        Productz.Page p = Productz.page(page, size, filter, sort, order, pType);
+    public static Result getProducts(int page, int size, String sort, String order, String filter, String category) {
+        Productz.Page p = Productz.page(page, size, filter, sort, order, category);
         Logger.debug("Constructed page: {}", p);
         return ok(Json.toJson(p));
     }

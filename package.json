@@ -6,6 +6,7 @@
     "coffee-script": "",
     "grunt": "",
     "grunt-contrib-coffee": "",
-    "grunt-contrib-watch": "~0.5.3"
+    "grunt-contrib-watch": "~0.5.3",
+		"grunt-contrib-concat": ""
   }
 }

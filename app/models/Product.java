@@ -15,6 +15,7 @@ public class Product {
     @Constraints.Required
     public String name;
 
+    @Constraints.Required
     public String description;
 
     @Constraints.Required
@@ -22,7 +23,7 @@ public class Product {
 
     @Constraints.Required
     @Enumerated(EnumType.STRING)
-    public ProductType type;
+    public ProductType category;
 
     public boolean active;
 
@@ -42,6 +43,6 @@ public class Product {
 
     @Override
     public String toString() {
-        return "Product " + id + ". Name: " + name + ". Price: " + price + ". Type: " + type;
+        return "Product " + id + ". Name: " + name + ". Price: " + price + ". category: " + category;
     }
 }

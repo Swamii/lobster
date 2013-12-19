@@ -1,16 +1,24 @@
 <div class="modal-header">
     <h3>
         Your cart
-        <span ng-switch="cart.cartItems.length">
+        <span ng-switch="cart.length">
             <span ng-switch-when="0"> is empty</span>
-            <span ng-switch-when="1"> contains {{ cart.cartItems.length }} item</span>
-            <span ng-switch-default> contains {{ cart.cartItems.length }} items</span>
+            <span ng-switch-when="1"> contains {{ cart.length }} item</span>
+            <span ng-switch-default> contains {{ cart.length }} items</span>
         </span>
     </h3>
 </div>
 <div class="modal-body">
+    <div ng-if="cart.length > 0" class="alert alert-info">
+        <span>Click on a field to edit it.</span>
+    </div>
+
+    <div ng-show="errors" class="alert alert-danger">
+        <p ng-repeat="(field, error) in errors">{{ field }}: {{ error[0] }}</p>
+    </div>
+
     <ul class="media-list">
-        <li class="media list-unstyled" ng-repeat="cartItem in cart.cartItems">
+        <li class="media list-unstyled" ng-repeat="cartItem in cart">
             <a class="pull-left" href="#">
                 <img class="media-object" src="http://placekitten.com/g/64/64" alt="PLACEKITTEN COMES!">
             </a>
@@ -19,10 +27,11 @@
                 <p>{{ cartItem.product.description }}</p>
                 <label class="col-md-1">Qty</label>
                 <div class="col-md-4">
-                    <input type="number" class="form-control input-sm" ng-model="cartItem.quantity" required>
+                    <input ng-show="editable.id === cartItem.id" type="number" lowest-number="1" class="form-control input-sm" ng-model="editable.quantity" required>
+                    <span ng-show="editable.id !== cartItem.id" ng-click="openForEdit($index)" class="form-control">{{ cartItem.quantity }}</span>
                 </div>
-                <div class="col-md-3">
-                    <button class="form-control btn btn-success" ng-click="update($index)">Update</button>
+                <div ng-show="editable.id === cartItem.id" class="col-md-3">
+                    <button class="form-control btn btn-success" ng-click="update()">Update</button>
                 </div>
                 <div class="col-md-3">
                     <button class="form-control btn btn-danger" ng-click="remove($index)">Remove</button>
@@ -32,6 +41,6 @@
     </ul>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary">Checkout</button>
+    <a class="btn btn-primary" href="/checkout">Checkout</a>
     <button class="btn btn-default" ng-click="close()">Close</button>
 </div>

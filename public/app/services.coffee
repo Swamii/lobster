@@ -9,8 +9,10 @@ api.factory 'Api', ['Restangular', (Restangular) ->
 
 api.factory 'UserService', ['USER', (USER) ->
   isLoggedIn: ->
-    !!USER
-  email: USER
+    USER and USER.email
+  isAdmin: ->
+    USER and USER.email and USER.isAdmin
+  email: USER.email
 ]
 
 api.factory 'FlashService', ['$rootScope', ($rootScope) ->
@@ -28,20 +30,32 @@ api.factory 'CartService', ['Api', 'UserService', '$rootScope', 'FlashService', 
   setCart = ->
     if UserService.isLoggedIn()
       Api.all('cart').getList().then (incCart) ->
-        console.log incCart
+        # Restangular's copy method sadly doesn't seem to trigger $watch-updates
         angular.copy incCart, cart
 
+  setCart()
+
   buy = (product) ->
-    cart.post(id: product.id).then (cartItem) ->
-        cart.cartItems.push cartItem
-        $rootScope.$broadcast('itemAdded')
+    Api.all('cart').post(id: product.id).then (cartItem) ->
+        cart.push cartItem
+        $rootScope.$broadcast 'itemAdded'
       , (error) ->
         FlashService.show error
 
-  remove = (item) ->
-    console.log item
+  buyStatus = (product) ->
+    if not UserService.isLoggedIn()
+      return "login"
+    else if ownedByUser product
+      return "owned"
+    else
+      return "buy"
 
-  setCart()
+  ownedByUser = (product) ->
+    owned = no
+    angular.forEach cart, (item) ->
+      if item.product.id is product.id
+        owned = yes
+    owned
 
   cart: cart
   reset: ->
@@ -50,8 +64,13 @@ api.factory 'CartService', ['Api', 'UserService', '$rootScope', 'FlashService', 
     buy(product)
   remove: (item) ->
     remove(item)
+  buyStatus: (product) ->
+    buyStatus(product)
 ]
 
+##
+## NOT USED, use angular's $broadcast or $emit with $on instead -> ##
+##
 api.factory 'SubService', ->
   cache = {}
 
@@ -66,17 +85,3 @@ api.factory 'SubService', ->
     t = handle[0]
     cache[t] and angular.forEach cache[t] (val, idx) ->
       cache[t].splice idx, 1 if val is handle[1]
-
-
-api.factory 'DudeService', ->
-  dudes = []
-
-  dudes: dudes
-  add: (newDude) ->
-    dudes.push newDude
-    dudes
-  remove: (remDude) ->
-    angular.forEach dudes, (dude, idx) ->
-      if remDude.id is dude.id
-        dudes.splice(idx, 1)
-    dudes

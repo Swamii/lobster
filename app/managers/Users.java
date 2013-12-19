@@ -98,7 +98,7 @@ public class Users {
     }
 
     public static boolean isAdmin(String email) {
-        Logger.debug("Users.isAdmin for email ", email);
+        Logger.debug("Users.isAdmin for email {}", email);
         String q = "SELECT COUNT(u) FROM User u WHERE " +
                    "email = :email AND userAccess = :userAccess";
 
@@ -108,10 +108,8 @@ public class Users {
                 .getSingleResult();
 
         if (count == 1) {
-            Logger.debug(email, " is admin!");
             return true;
         }
-        Logger.debug(email, " is NOT admin!");
         return false;
     }
 }

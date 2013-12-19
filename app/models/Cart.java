@@ -19,7 +19,7 @@ public class Cart {
     @JsonIgnore
     public User user;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     public List<CartItem> cartItems;
 
     @Override

@@ -64,7 +64,10 @@ public class User {
             return false;
         }
         User comp = (User) obj;
-        if (this.id.equals(comp.id)) {
+        if (this.id != null && comp.id != null && this.id.equals(comp.id)) {
+            return true;
+        }
+        if (this.email != null && comp.email != null && this.email.equals(comp.email)) {
             return true;
         }
         return false;

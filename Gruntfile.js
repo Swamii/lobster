@@ -3,10 +3,16 @@
 module.exports = function(grunt) {
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
-		coffee: {
+        concat: {
+            dist: {
+                src: ['public/javascripts/**/*.js'],
+                dest: 'public/js/vendor.js'
+            }
+        },
+        coffee: {
 			files: {
 				src: ['public/app/**/*.coffee'],
-				dest: 'public/javascripts/script.js'
+				dest: 'public/js/app.js'
 			}
 		},
 		watch: {
@@ -17,7 +23,7 @@ module.exports = function(grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-coffee');
+	grunt.loadNpmTasks('grunt-contrib-concat');
 
     grunt.registerTask('default', ['coffee']);
-
 };

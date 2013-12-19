@@ -1,3 +1,27 @@
 input.ng-dirty.ng-invalid {
     border-color: #FA787E;
 }
+
+.cartSize {
+    -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 2s;
+    transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 2s;
+}
+
+.cartSize.cartFlash {
+    border: 3px solid gold;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 50;
+}
+
+.cartSize.cartActive {
+    padding: 10px 15px;
+    font-size: 16px;
+}
+
+.cartSize.cartActive span.badge {
+    color: yellow;
+    font-size: 16px;
+    background-color: steelblue;
+}

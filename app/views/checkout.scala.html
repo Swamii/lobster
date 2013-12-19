@@ -1,0 +1,19 @@
+@(totalCost: Double)
+@main("Lobster.io / Checkout") {
+    <h1>Welcome to checkout!</h1>
+    <div id="checkout" ng-controller="CheckoutCtrl" ng-init="totalCost = @totalCost">
+
+        <ul class="list-unstyled">
+
+            <li ng-repeat="item in cart">{{ item.product.name }} x {{ item.quantity }}</li>
+
+        </ul>
+
+        <p class="alert alert-info">
+            Total price: {{ totalCost | currency }}
+        </p>
+
+        <a class="btn btn-success" href="@routes.Application.buy()">Buy</a>
+
+    </div>
+}

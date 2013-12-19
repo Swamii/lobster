@@ -18,14 +18,12 @@ public class Auth extends Action.Simple {
         String id = ctx.session().get("id");
         if (email != null && !email.isEmpty()) {
             ctx.args.put("user", Users.byEmail(email));
-            Logger.debug("User with email: " );
         }
         return delegate.call(ctx);
     }
 
     public static User getUser() {
         User loggedInUser = (User) Http.Context.current().args.get("user");
-        Logger.debug("Auth Action: fetching User {}", loggedInUser);
         return loggedInUser;
     }
 
@@ -35,5 +33,13 @@ public class Auth extends Action.Simple {
             return "";
         }
         return loggedInUser.email;
+    }
+
+    public static boolean isAdmin() {
+        User loggedInUser = (User) Http.Context.current().args.get("user");
+        if (loggedInUser != null && Users.isAdmin(loggedInUser.email)) {
+            return true;
+        }
+        return false;
     }
 }

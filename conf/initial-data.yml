@@ -8,6 +8,7 @@ users:
         firstName:  Lobster
         lastName:   Man
         password:   secret
+        userAccess: ADMIN
 
     - !!models.User
         email:      herman@example.com
@@ -32,122 +33,122 @@ users:
 products:
 
     - !!models.Product
-        name:       Play 2.0
-        price:      1000
-        type:       MISC
-        active:     Yes
+        name:        Play 2.0
+        price:       1000
+        category:    MISC
+        active:      Yes
         description: The newest, coolest, hippest framework in the biz.
 
     - !!models.Product
-        name:       The Lobster
-        price:      100000
-        type:       LOBSTER
-        active:     Yes
+        name:        The Lobster
+        price:       100000
+        category:    LOBSTER
+        active:      Yes
         description: The poster child for this website
 
     - !!models.Product
-        name:       Crabby the crab
-        price:      10
-        type:       CRAB
-        active:     Yes
+        name:        Crabby the crab
+        price:       10
+        category:    CRAB
+        active:      Yes
         description: He's a lovable crab.
 
     - !!models.Product
-        name:       Tuny
-        price:      900
-        type:       TUNA
-        active:     No
+        name:        Tuny
+        price:       900
+        category:    TUNA
+        active:      Yes
         description: He smells nice
 
     - !!models.Product
-        name:       Tunacious T
-        price:      500
-        type:       TUNA
-        active:     Yes
+        name:        Tunacious T
+        price:       500
+        category:    TUNA
+        active:      Yes
         description: Rockin' fish
 
     - !!models.Product
-        name:       Cream
-        price:      1000
-        type:       MISC
-        active:     No
+        name:        Cream
+        price:       1000
+        category:    MISC
+        active:      Yes
         description: It's white and fluffy.
 
     - !!models.Product
-        name:       Dat Blowfish
-        price:      1
-        type:       GENERIC_FISH
-        active:     Yes
+        name:        Dat Blowfish
+        price:       1
+        category:    GENERIC_FISH
+        active:      Yes
         description: Just blowfish.
 
     - !!models.Product
-        name:       Sally
-        price:      100
-        type:       SALMON
-        active:     Yes
+        name:        Sally
+        price:       100
+        category:    SALMON
+        active:      Yes
         description: Salmon with a name
 
     - !!models.Product
-        name:       Karate Kid VHS
-        price:      155
-        type:       MISC
-        active:     Yes
+        name:        Karate Kid VHS
+        price:       155
+        category:    MISC
+        active:      Yes
         description: Somehow a movie got in here.
 
     - !!models.Product
-        name:       Dondo
-        price:      169
-        type:       MISC
-        active:     Yes
+        name:        Dondo
+        price:       169
+        category:    MISC
+        active:      Yes
         description: Dondo pls
 
     - !!models.Product
-        name:       Lobster A++
-        price:      10000
-        type:       LOBSTER
-        active:     Yes
+        name:        Lobster A++
+        price:       10000
+        category:    LOBSTER
+        active:      Yes
         description: High Quality NoScope 420 Lobster
 
     - !!models.Product
-        name:       Crabs
-        price:      10
-        type:       CRAB
-        active:     Yes
+        name:        Crabs
+        price:       10
+        category:    CRAB
+        active:      Yes
         description: Crabs. We have them.
 
     - !!models.Product
-        name:       Makin' Bacon
-        price:      1000
-        type:       MISC
-        active:     Yes
+        name:        Makin' Bacon
+        price:       1000
+        category:    MISC
+        active:      Yes
         description: Makin Bacon Bakin
 
     - !!models.Product
-        name:       Fish
-        price:      1550
-        type:       GENERIC_FISH
-        active:     Yes
+        name:        Fish
+        price:       1550
+        category:    GENERIC_FISH
+        active:      Yes
         description: Is fish.
 
     - !!models.Product
-        name:       Something
-        price:      199
-        type:       MISC
-        active:     Yes
+        name:        Something
+        price:       199
+        category:    MISC
+        active:      Yes
         description: ...
 
     - !!models.Product
-        name:       Head First Java
-        price:      201
-        type:       MISC
-        active:     Yes
+        name:        Head First Java
+        price:       201
+        category:    MISC
+        active:      Yes
         description: A book
 
     - !!models.Product
-        name:       And another thing
-        price:      154
-        type:       MISC
-        active:     Yes
+        name:        And another thing
+        price:       154
+        category:    MISC
+        active:      Yes
         description: Nothing more to say.
 
 

@@ -7,7 +7,7 @@
         <h2>Sign up</h2>
     </div>
 
-    <div ng-controller="SignupFormCtrl">
+    <div ng-controller="GenericFormCtrl">
         <form action="@routes.Application.signup()" method="POST" class="form-horizontal" role="form" name="signupForm">
 
             @if(form.hasGlobalErrors) {

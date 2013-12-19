@@ -104,8 +104,6 @@ public class TestModels extends WithApplication {
                         assertThat(user).isNotNull();
                         assertThat(user.cart).isNotNull();
 
-                        user.cart.cartItems = new HashSet<CartItem>();
-
                         user = Users.update(user);
 
                         User wuda = Users.byId(user.id);
@@ -116,7 +114,7 @@ public class TestModels extends WithApplication {
                         Product product = new Product();
                         product.name = "soppa";
                         product.price = 100;
-                        product.type = ProductType.GENERIC_FISH;
+                        product.category = ProductType.GENERIC_FISH;
 
                     }
                 });

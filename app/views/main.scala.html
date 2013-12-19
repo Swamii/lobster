@@ -5,12 +5,9 @@
 <html lang="en" ng-app="app">
     <head>
         <title>@title</title>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap-theme.min.css")">
+        <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-        <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
-        <script src="@routes.Assets.at("javascripts/bootstrap.min.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/underscore.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/angular.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/restangular.js")" type="text/javascript"></script>
@@ -18,12 +15,12 @@
         <script src="@routes.Assets.at("javascripts/ui-bootstrap-tpls-0.7.0.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/angular-animate.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/angular-cookies.js")" type="text/javascript"></script>
-        <script src="@routes.Assets.at("javascripts/script.js")" type="text/javascript"></script>
-        @*<script src="@routes.Assets.at("javascripts/api.js")" type="text/javascript"></script>*@
-        @*<script src="@routes.Assets.at("javascripts/controllers.js")" type="text/javascript"></script>*@
-        @*<script src="@routes.Assets.at("javascripts/directives.js")" type="text/javascript"></script>*@
+        <script src="@routes.Assets.at("js/app.js")" type="text/javascript"></script>
         <script>
-            angular.module('app').constant("USER", "@Auth.getUsername()");
+            angular.module('app').constant("USER", {
+                email: "@Auth.getUsername()",
+                isAdmin: @Auth.isAdmin()
+            });
         </script>
         @extraHead
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -37,12 +34,21 @@
                 <div class="col-sm-2 col-sm-offset-2 pull-right" style="margin-top: 40px">
                 @if(Auth.getUser() != null) {
 
-                    <p>
-                        @Auth.getUser().firstName @Auth.getUser().lastName @request.username() |
-                        <a href="@routes.Application.logout()">Sign out</a>
-                    </p>
+                    <div class="dropdown" style="margin-bottom: 10px">
+                        <button class="btn btn-default dropdown-toggle">
+                            @Auth.getUser().firstName @Auth.getUser().lastName <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            @if(Auth.isAdmin()) {
+                                <li><a href="@routes.Admin.products()">Products</a></li>
+                                <li><a href="#">Customers</a></li>
+                                <li class="divider"></li>
+                            }
+                            <li><a href="@routes.Application.logout()">Sign out</a></li>
+                        </ul>
+                    </div>
                     <div ng-controller="CartCtrl">
-                        <button class="btn btn-sm" ng-click="showCart()">
+                        <button class="btn btn-sm cartSize" ng-class="{cartActive: cart.length, cartFlash: doFlash}" ng-click="showCart()">
                             Cart <span class="badge">{{ cart.length }}</span>
                         </button>
                     </div>
@@ -54,11 +60,8 @@
                     <li class="">
                         <a href="@routes.Application.index()">Home</a>
                     </li>
-                    <li class="{active: $state.includes('browse')}">
+                    <li class="{active: $state.includes('product')}">
                         <a href="/#/browse">Browse</a>
-                    </li>
-                    <li ng-class="{active: $state.includes('home')}">
-                        <a ng-href="/#/home">"Home"</a>
                     </li>
                     <li ng-class="{active: $state.includes('dude')}">
                         <a ng-href="/#/dude">List</a>

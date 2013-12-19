@@ -15,7 +15,8 @@ public class Productz {
     }
 
     public static Product save(Product product) {
-        Logger.debug("Saving new Product, name: {}, type: {}", product.name, product.type);
+        product.active = true;
+        Logger.debug("Saving new Product, name: {}, category: {}", product.name, product.category);
         JPA.em().persist(product);
         return product;
     }
@@ -63,8 +64,8 @@ public class Productz {
         String productQ = "SELECT p FROM Product p WHERE p.active = true AND lower(p.name) LIKE :filter";
 
         if (!pType.isEmpty()) {
-            productQ += " AND p.type = :type";
-            totalQ += " AND p.type = :type";
+            productQ += " AND p.category = :category";
+            totalQ += " AND p.category = :category";
         }
 
         productQ += " ORDER BY p." + sortField + " " + order;
@@ -79,18 +80,23 @@ public class Productz {
 
         if (!pType.isEmpty()) {
             ProductType type = ProductType.valueOf(pType);
-            totalQuery.setParameter("type", type);
-            productQuery.setParameter("type", type);
+            totalQuery.setParameter("category", type);
+            productQuery.setParameter("category", type);
         }
 
         int total = totalQuery.getSingleResult().intValue();
-        System.out.println("TOTALLY TOTAL " + total);
 
         List<Product> data = productQuery.setFirstResult((pageNum - 1) * pageSize)
                 .setMaxResults(pageSize)
                 .getResultList();
 
         return new Page(data, total, pageNum, pageSize);
+    }
+
+    public static int count() {
+        String q = "SELECT count(p) FROM Product p";
+
+        return JPA.em().createQuery(q, Long.class).getSingleResult().intValue();
     }
 
     public static class Page {
@@ -100,10 +106,9 @@ public class Productz {
         private final int pageIndex;
         private final List<Product> products;
         private final int totalPages;
-        private final ProductType[] productChoices = ProductType.values();
+        private final ProductType[] categories = ProductType.values();
 
         public Page(List<Product> data, int total, int pageNum, int pageSize) {
-            System.out.println("TOTAL " + total);
             this.products = data;
             this.totalRowCount = total;
             this.pageIndex = pageNum;
@@ -131,8 +136,8 @@ public class Productz {
             return totalPages;
         }
 
-        public ProductType[] getProductChoices() {
-            return productChoices;
+        public ProductType[] getCategories() {
+            return categories;
         }
 
     }

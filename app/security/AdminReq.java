@@ -10,7 +10,7 @@ public class AdminReq extends Security.Authenticator {
 
     @Override
     public String getUsername(Http.Context ctx) {
-        String email = ctx.session().get("email");
+        String email = ctx.session().get("user");
         String hash = ctx.session().get("id");
         Logger.debug("AdminReq.getUsername: ", email, ": ", hash);
         if (Users.checkCookieVal(email, hash) && Users.isAdmin(email)) {

@@ -3,36 +3,44 @@
 # ~~~~
 
 # Home page ->
-GET           /                                     controllers.Application.index()
-GET           /browse                               controllers.Application.browse()
+GET           /                         controllers.Application.index()
+GET           /browse                   controllers.Application.browse()
+GET           /checkout                 controllers.Application.checkout()
+GET           /buy                      controllers.Application.buy()
 
 # Dude ->
-GET           /api/dude                             controllers.Application.getDudes()
-POST          /api/dude                             controllers.Application.addDude()
-GET           /api/dude/:id                         controllers.Application.getDude(id: Long)
-PUT           /api/dude/:id                         controllers.Application.updateDude(id: Long)
-DELETE        /api/dude/:id                         controllers.Application.deleteDude(id: Long)
+GET           /api/dude                 controllers.Application.getDudes()
+POST          /api/dude                 controllers.Application.addDude()
+GET           /api/dude/:id             controllers.Application.getDude(id: Long)
+PUT           /api/dude/:id             controllers.Application.updateDude(id: Long)
+DELETE        /api/dude/:id             controllers.Application.deleteDude(id: Long)
 
 # Cart ->
-GET           /api/cart                             controllers.Application.getCart()
-POST          /api/cart                             controllers.Application.addToCart()
-PUT           /api/cart/:itemId                     controllers.Application.updateCartItem(itemId: Long)
-DELETE        /api/cart/:itemId                     controllers.Application.removeCartItem(itemId: Long)
+GET           /api/cart                 controllers.Application.getCart()
+POST          /api/cart                 controllers.Application.addToCart()
+PUT           /api/cart/:itemId         controllers.Application.updateCartItem(itemId: Long)
+DELETE        /api/cart/:itemId         controllers.Application.removeCartItem(itemId: Long)
 
-# Browse ->
-GET           /browse                               controllers.Application.browse()
-
-GET           /api/product                          controllers.Application.getProducts(page: Int ?= 1, size: Int ?= 10, sort ?= "name", order ?= "asc", filter ?= "", pType ?= "")
-GET           /api/product/:id                      controllers.Application.getProduct(id: Long)
+# Product ->
+GET           /api/product              controllers.Application.getProducts(page: Int ?= 1, size: Int ?= 10, sort ?= "name", order ?= "asc", filter ?= "", category ?= "")
+GET           /api/product/:id          controllers.Application.getProduct(id: Long)
 
 # Auth ->
-GET           /signup                               controllers.Application.showSignup()
-POST          /signup                               controllers.Application.signup()
+GET           /signup                   controllers.Application.showSignup()
+POST          /signup                   controllers.Application.signup()
 
-GET           /login                                controllers.Application.login()
-POST          /login                                controllers.Application.authenticate()
-GET           /logout                               controllers.Application.logout()
+GET           /login                    controllers.Application.login()
+POST          /login                    controllers.Application.authenticate()
+GET           /logout                   controllers.Application.logout()
+
+# Admin ->
+
+# Products
+GET           /admin/product            controllers.Admin.products()
+GET           /admin/product/:id        controllers.Admin.productDetail(id: Long)
+POST          /admin/product            controllers.Admin.addProduct()
+POST          /admin/product/:id        controllers.Admin.editProduct(id: Long)
 
 # Static/uploads ->
-GET           /assets/*file                         controllers.Assets.at(path="/public", file)
-GET           /assets/:fileName                     controllers.Application.picture(fileName)
+GET           /assets/*file             controllers.Assets.at(path="/public", file)
+GET           /assets/:fileName         controllers.Application.picture(fileName)

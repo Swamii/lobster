@@ -24,6 +24,29 @@ public class Cartz {
         return cart;
     }
 
+    public static Cart clear(Cart cart) {
+        cart.cartItems.clear();
+        JPA.em().merge(cart);
+        return cart;
+    }
+
+    public static Double getTotalCost(String username) {
+        Cart cart = Users.byEmail(username).cart;
+        Double total = 0.0;
+        for (CartItem item : cart.cartItems) {
+            total += item.product.price * item.quantity;
+        }
+        return total;
+    }
+
+    public static Double getTotalCost(Cart cart) {
+        Double total = 0.0;
+        for (CartItem item : cart.cartItems) {
+            total += item.product.price * item.quantity;
+        }
+        return total;
+    }
+
     public static Cart update(String email, CartItem item) {
         Cart cart = Users.byEmail(email).cart;
         Logger.debug("Testing update with merge item, merge cart.");
@@ -37,8 +60,9 @@ public class Cartz {
     public static Cart removeItem(String email, Long itemId) {
         Cart cart = Users.byEmail(email).cart;
         CartItem rmItem = itemById(itemId);
-        Logger.debug("Removing {} from {}. Count: {}. Check if it deleted correctly (orphan-ting)", rmItem, cart, cart.cartItems.size());
+        Logger.debug("Removing {} from {}. Count: {}.", rmItem.product.name, cart, cart.cartItems.size());
         cart.cartItems.remove(rmItem);
+        JPA.em().remove(rmItem);
         JPA.em().merge(cart);
         Logger.debug("Size is now {}", cart.cartItems.size());
         return cart;
